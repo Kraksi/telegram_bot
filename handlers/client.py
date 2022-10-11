@@ -5,7 +5,8 @@ from data_base import sqlite_db
 
 
 async def commands_start(message: types.Message):
-    await bot.send_message(message.from_user.id,'Чем же вамм помочь?\n\n Ниже вы можете задать свой вопрос', reply_markup=kb_client)
+    await bot.send_message(message.from_user.id, 'Чем же вамм помочь?\n\n Ниже вы можете задать свой вопрос', reply_markup=kb_client)
+    await sqlite_db.sql_add_users(message.from_user.id, message.from_user.first_name, message.from_user.last_name, message.from_user.username)
 
 
 async def faq(message: types.Message):
