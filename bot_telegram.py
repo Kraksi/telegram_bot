@@ -5,7 +5,8 @@ from data_base import sqlite_db
 
 async def on_startup(_):
     print('Bot online')
-    sqlite_db.sql_start()
+    sqlite_db.sql_start_q()
+    sqlite_db.sql_start_users()
 
 
 from handlers import client, admin, other
