@@ -69,7 +69,12 @@ async def call_category(callback: types.CallbackQuery):
 async def load_category(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
         async with state.proxy() as data:
-            data['category'] = message.text
+            if message.text =='Мобильное приложение':
+                dt = 1
+                data['category'] = dt
+            elif message.text == 'Учет посещаемости':
+                dt = 2
+                data['category'] = dt
         await sqlite_db.sql_add_command_questions(state)
         await bot.send_message(message.from_user.id, 'Загрузить еще?', reply_markup=admin_kb.button_case_admin_dop)
         await state.finish()
