@@ -8,8 +8,9 @@ def sql_start_q():
     cur_q = base_q.cursor()
     if base_q:
         print('Questions data base connected OK!')
-    base_q.execute('CREATE TABLE IF NOT EXISTS list_q_a(question TEXT PRIMARY KEY, answer TEXT)')
+    base_q.execute('CREATE TABLE IF NOT EXISTS list_q_a(question TEXT PRIMARY KEY, answer TEXT, category TEXT)')
     base_q.commit()
+
 
 def sql_start_users():
     global base_u, cur_u
@@ -20,9 +21,10 @@ def sql_start_users():
     base_u.execute('CREATE TABLE IF NOT EXISTS users(user_id TEXT PRIMARY KEY, user_name TEXT, user_second_name TEXT, user_nickname TEXT)')
     base_u.commit()
 
+
 async def sql_add_command_questions(state):
     async with state.proxy() as data:
-        cur_q.execute('INSERT INTO list_q_a VALUES (?,?)', tuple(data.values()))
+        cur_q.execute('INSERT INTO list_q_a VALUES (?,?,?)', tuple(data.values()))
         base_q.commit()
 
 
@@ -46,4 +48,3 @@ async def sql_read(message):
 def sql_read_1():
     cur_q.execute('SELECT * FROM list_q_a')
     return cur_q.fetchall()
-

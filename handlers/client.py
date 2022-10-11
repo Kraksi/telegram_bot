@@ -28,7 +28,7 @@ async def list_of_last_questions(message : types.Message):
 
 
 def register_handlers_client(dp: Dispatcher):
-    dp.register_message_handler(commands_start, commands=['start', 'help'])
+    dp.register_message_handler(commands_start, commands=['start', 'help', 'start_normal_mode'])
     dp.register_message_handler(faq, commands=['FAQ'])
     dp.register_message_handler(ask_operator, commands=['ASK'])
     dp.register_message_handler(list_of_last_questions, commands=['Questions'])
