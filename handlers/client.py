@@ -41,14 +41,14 @@ async def list_qu(call):
         needed_1 = 1
         mas_1 = sqlite_db.sql_read_2(needed_1)
         for q in mas_1:
-            await bot.send_message(call.from_user.id, f'Вопрос:\n {q[0]}\n\nОтвет:\n {q[1]}')
+            await bot.send_message(call.from_user.id, f'Вопрос:\n{q[0]}\n\nОтвет:\n{q[1]}')
 
 
     elif call.data =='category_AT':
         needed_2 = 2
         mas_2 = sqlite_db.sql_read_2(needed_2)
         for w in mas_2:
-            await bot.send_message(call.from_user.id, f'Вопрос:\n {w[0]}\n\nОтвет:\n {w[1]}')
+            await bot.send_message(call.from_user.id, f'Вопрос:\n{w[0]}\n\nОтвет:\n{w[1]}')
 
 #async def choose_questions_from_list(message: types.Message):
 #    await sqlite_db.sql_read_2(message)

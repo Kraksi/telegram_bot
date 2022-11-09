@@ -41,8 +41,10 @@ def answer_db(text):
         answer = -1
         for q in mas:
             # С помощью fuzzywuzzy получаем, насколько похожи две строки
-            a_cur_coef = (fuzz.token_sort_ratio(q[0].replace('u:', ''), text))
+#            a_cur_coef = (fuzz.token_sort_ratio(q[0].replace('u:', ''), text))
+            a_cur_coef = (fuzz.ratio(q[0].replace('u:', ''), text))
             if (a_cur_coef > a_max_coef and a_cur_coef != a_max_coef):
+
                 a_max_coef = a_cur_coef
                 answer = q
         return f'Ваш ответ:\n{answer[1]}'
