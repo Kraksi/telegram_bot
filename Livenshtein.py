@@ -1,52 +1,30 @@
-#import os
+# import os
 from fuzzywuzzy import fuzz
 from data_base import sqlite_db
 
 mas = []
-''' Старые функции через файл
-if os.path.exists('Questions.txt'):
-    f = open('Questions.txt', 'r', encoding='UTF-8')
-    for x in f:
-        if (len(x.strip()) > 2):
-            mas.append(x.strip().lower())
-    f.close()
+funcs = [fuzz.ratio, fuzz.token_sort_ratio, fuzz.partial_ratio, fuzz.token_set_ratio, fuzz.UWRatio,
+         fuzz.partial_token_set_ratio, fuzz.partial_token_sort_ratio, fuzz.QRatio, fuzz.WRatio]
 
-def answer(text):
-    try:
-        text = text.lower().strip()
-        if os.path.exists('Questions.txt'):
-            a = 0
-            n = 0
-            nn = 0
-            for q in mas:
-                if ('u: ' in q):
-                    # С помощью fuzzywuzzy получаем, насколько похожи две строки
-                    aa = (fuzz.token_sort_ratio(q.replace('u: ', ''), text))
-                    if (aa > a and aa != a):
-                        a = aa
-                        nn = n
-                n = n + 1
-            s = mas[nn + 1]
-            return s
-        else:
-            return 'Ошибка'
-    except:
-        return 'Ошибка'
-'''
+
+def get_coef(questions, text):
+    coef_max = 0
+    answer = None
+    for question in questions:
+        coef_cur = 0
+        for quest in question:
+            for f in funcs:
+                coef_cur += f(quest.replace('u:', ''), text)
+        if coef_cur > coef_max:
+            coef_max = coef_cur
+            answer = question[1]
+    print(coef_max)
+    return answer
+
+
 def answer_db(text):
-    try:
-        text = text.lower().strip()
-        mas = sqlite_db.sql_read_1()
-        a_max_coef = 0
-        answer = -1
-        for q in mas:
-            # С помощью fuzzywuzzy получаем, насколько похожи две строки
-#            a_cur_coef = (fuzz.token_sort_ratio(q[0].replace('u:', ''), text))
-            a_cur_coef = (fuzz.ratio(q[0].replace('u:', ''), text))
-            if (a_cur_coef > a_max_coef and a_cur_coef != a_max_coef):
+    text = text.lower().strip()
+    mas = sqlite_db.sql_read_1()
+    answer = get_coef(mas, text)
 
-                a_max_coef = a_cur_coef
-                answer = q
-        return f'Ваш ответ:\n{answer[1]}'
-    except:
-        return 'Ошибка'
+    return f'Ваш ответ:\n{answer}'
