@@ -1,5 +1,6 @@
 import sqlite3 as sq
 from create_bot import dp, bot
+import Other_func
 
 
 def sql_start_q():
@@ -8,8 +9,9 @@ def sql_start_q():
     cur_q = base_q.cursor()
     if base_q:
         print('Questions data base connected OK!')
-    base_q.execute('CREATE TABLE IF NOT EXISTS list_q_a(question TEXT PRIMARY KEY, answer TEXT)')
+    base_q.execute('CREATE TABLE IF NOT EXISTS list_q_a(question TEXT PRIMARY KEY, answer TEXT, category INT)')
     base_q.commit()
+
 
 def sql_start_users():
     global base_u, cur_u
@@ -17,12 +19,14 @@ def sql_start_users():
     cur_u = base_u.cursor()
     if base_u:
         print('Users data base connected OK!')
-    base_u.execute('CREATE TABLE IF NOT EXISTS users(user_id TEXT PRIMARY KEY, user_name TEXT, user_second_name TEXT, user_nickname TEXT)')
+    base_u.execute(
+        'CREATE TABLE IF NOT EXISTS users(user_id TEXT PRIMARY KEY, user_name TEXT, user_second_name TEXT, user_nickname TEXT)')
     base_u.commit()
+
 
 async def sql_add_command_questions(state):
     async with state.proxy() as data:
-        cur_q.execute('INSERT INTO list_q_a VALUES (?,?)', tuple(data.values()))
+        cur_q.execute('INSERT INTO list_q_a VALUES (?,?,?)', tuple(data.values()))
         base_q.commit()
 
 
@@ -34,16 +38,21 @@ async def sql_add_users(message_chat_id, message_user_name, message_user_second_
     if data is None:
         cur_u.execute('INSERT INTO users VALUES (?,?,?,?);', user_data)
         base_u.commit()
-    else:
-        print('Уже есть такой пользователь')
 
 
 async def sql_read(message):
     for ret in cur_q.execute('SELECT * FROM list_q_a').fetchall():
-        await bot.send_message(message.from_user.id, f'Вопрос: {ret[0]}\nОтвет: {ret[1]}')
+        await bot.send_message(message.from_user.id, f'Вопрос:\n{ret[0]}\nОтвет:\n{ret[1]}')
 
 
 def sql_read_1():
     cur_q.execute('SELECT * FROM list_q_a')
     return cur_q.fetchall()
 
+
+def sql_read_2(category):
+    mas = []
+    cur_q.execute(f'SELECT * FROM list_q_a WHERE category = {category}')
+    mas = cur_q.fetchall()
+    return mas
+#    await bot.send_message(message.from_user.id, f'Вопрос: {ret[0]}\nОтвет: {ret[1]}')
