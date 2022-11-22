@@ -1,5 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
-from aiogram.types import InlineKeyboardButton,InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 '''Создание обычной клавиатуры'''
 
@@ -25,3 +25,6 @@ markup_inline = InlineKeyboardMarkup()
 item_MA = InlineKeyboardButton(text='Мобильное приложение', callback_data='category_MA')
 item_AT = InlineKeyboardButton(text='Учет посещаемости', callback_data='category_AT')
 markup_inline.add(item_AT).add(item_MA)
+
+
+
