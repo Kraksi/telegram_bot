@@ -27,4 +27,9 @@ item_AT = InlineKeyboardButton(text='Учет посещаемости', callbac
 markup_inline.add(item_AT).add(item_MA)
 
 
+'''Создание инлайн клавиатуры (помогло/не помогло)'''
 
+kb_necessity = InlineKeyboardMarkup()
+button_yes = InlineKeyboardButton(text='Да', callback_data='answer_yes')
+button_no = InlineKeyboardButton(text='Нет', callback_data='answer_no')
+kb_necessity.add(button_yes).add(button_no)

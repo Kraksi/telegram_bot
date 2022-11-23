@@ -9,12 +9,12 @@ async def on_startup(_):
     sqlite_db.sql_start_users()
 
 '''Регистрация всех хендлеров'''
-from handlers import client, admin, other
+from handlers import client, admin, main_function
 
 
 client.register_handlers_client(dp)
 admin.register_handlers_admin(dp)
-other.register_handlers_other(dp)
+main_function.register_handlers_other(dp)
 
 '''Получение сообщений'''
 executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

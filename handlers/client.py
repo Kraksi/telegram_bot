@@ -91,6 +91,7 @@ async def show_answer(callback):
             await bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text = text)
 
 
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(commands_start, commands=['start', 'help', 'start_normal_mode'])
 
