@@ -7,8 +7,6 @@ from data_base import sqlite_db
 from keyboards import admin_kb
 from keyboards import category_kb
 
-ID = None
-
 
 class FSMAdmin(StatesGroup):
     question = State()
@@ -17,25 +15,35 @@ class FSMAdmin(StatesGroup):
 
 
 async def make_changes_command(message: types.Message):
-    global ID
-    ID = message.from_user.id
-    await bot.send_message(message.from_user.id, 'What do yoy want my lord?', reply_markup=admin_kb.button_case_admin_main)
-    await message.delete()
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
+        print(f'Пользователь с id -> {message.from_user.id} подтвержден ')
+        await bot.send_message(message.from_user.id, 'Что вы хотите сделать?',
+                               reply_markup=admin_kb.button_case_admin_main)
+        await bot.send_message(message.from_user.id, 'What do yoy want my lord?', reply_markup=admin_kb.button_case_admin_main)
+        await message.delete()
 
 
 async def accept_the_request(message: types.Message):
-    if message.from_user.id == ID:
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
         await bot.send_message('-1001856039852', f'{message.from_user.username} Принял запрос')
 
 
 async def cm_start(message: types.Message):
-    if message.from_user.id == ID:
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
         await FSMAdmin.question.set()
         await bot.send_message(message.from_user.id, 'Введите вопрос')
 
 
 async def cancel_handler(message: types.Message, state: FSMContext):
-    if message.from_user.id == ID:
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
         current_state = await state.get_state()
         if current_state is None:
             return
@@ -44,7 +52,9 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 
 async def load_question(message: types.Message, state: FSMContext):
-    if message.from_user.id == ID:
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
         async with state.proxy() as data:
             data['question'] = message.text
         await FSMAdmin.next()
@@ -52,7 +62,9 @@ async def load_question(message: types.Message, state: FSMContext):
 
 
 async def load_answer(message: types.Message, state: FSMContext):
-    if message.from_user.id == ID:
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
         async with state.proxy() as data:
             data['answer'] = message.text
         await FSMAdmin.next()
@@ -67,7 +79,9 @@ async def call_category(callback: types.CallbackQuery):
 
 
 async def load_category(message: types.Message, state: FSMContext):
-    if message.from_user.id == ID:
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
         async with state.proxy() as data:
             if message.text =='Мобильное приложение':
                 dt = 1

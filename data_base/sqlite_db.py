@@ -25,6 +25,8 @@ def sql_start_users():
     base_u.execute(
         'CREATE TABLE IF NOT EXISTS users(user_id TEXT PRIMARY KEY, user_name TEXT, user_second_name TEXT, user_nickname TEXT)')
     base_u.commit()
+    base_u.execute('CREATE TABLE IF NOT EXISTS allowed_users(user_id TEXT PRIMARY KEY, user_name TEXT)')
+    base_u.commit()
 
 
 async def sql_add_command_questions(state):
