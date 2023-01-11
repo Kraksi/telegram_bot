@@ -5,6 +5,9 @@ from keyboards import kb_client_inline_full, kb_necessity
 from data_base import sqlite_db
 
 
+'''Вывод ответа на вопрос пользователя'''
+
+
 async def main_function_answer(message: types.Message):
     number = 0
     popular_answer = None
@@ -23,12 +26,9 @@ async def main_function_answer(message: types.Message):
         if number == 1:
             continue
         await bot.send_message(message.from_user.id, answer)
-'''
-    await bot.send_message(message.from_user.id, '--------------------\n\nВам помог ответ? Если нет, можете '
-                                                 'попробовать сформулировать вопрос по другому или подать запрос на '
-                                                 'связь со специалистом\n\n--------------------',
-                           reply_markup=kb_client_inline_full)
-'''
+
+
+'''Вывод вопроса о полезности вопроса'''
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('answer_'))
@@ -36,9 +36,10 @@ async def answer_necessity(callback):
     flag = callback.data.replace('answer_', '')
     await sqlite_db.add_necessity(callback.from_user.id, flag)
     await bot.send_message(callback.from_user.id, '--------------------\n\nВам помог ответ? Если нет, можете '
-                                                 'попробовать сформулировать вопрос по другому или подать запрос на '
-                                                 'связь со специалистом\n\n--------------------',
+                                                  'попробовать сформулировать вопрос по другому или подать запрос на '
+                                                  'связь со специалистом\n\n--------------------',
                            reply_markup=kb_client_inline_full)
 
-def register_handlers_other(dp : Dispatcher):
+
+def register_handlers_other(dp: Dispatcher):
     dp.register_message_handler(main_function_answer)

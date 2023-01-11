@@ -2,8 +2,9 @@ from aiogram import types, Dispatcher
 from create_bot import dp, bot
 from keyboards import kb_client, kb_client_inline_start, kb_client_inline_full, markup_inline
 from data_base import sqlite_db
-from keyboards import category_kb
+from keyboards import client_kb
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 
 
 async def filter_text(text):
@@ -43,43 +44,42 @@ async def menu(call):
     elif call.data == 'button_questions':
         await bot.send_message(call.from_user.id, 'Выберите категорию', reply_markup=markup_inline)
     elif call.data == 'button_ask':
+        quest, = await sqlite_db.read_quest(call.from_user.id)
         await bot.send_message(call.from_user.id,
                                '--------------------\n\nВ ближайшее время с вами свяжется '
                                'специалист\n\n--------------------')
-        await bot.send_message('-1001856039852', f'@{call.from_user.username} Хочет задать вопрос')
+        await bot.send_message('-1001856039852', f'@{call.from_user.username} Хочет задать вопрос: {quest}')
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('category_'))
 async def list_qu(call):
     if call.data == 'category_MA':
-        mas_1 = []
-        number = 0
-        needed_1 = 1
-        mas_1 = sqlite_db.sql_read_2(needed_1)
-        for q in mas_1:
-            number += 1
-            await bot.send_message(call.from_user.id, f'Вопрос:\n{q[0]}\n', reply_markup=InlineKeyboardMarkup().add(
-                InlineKeyboardButton(text='Показать ответ', callback_data=f'show_answer_1_{number}')))
         await bot.send_message(call.from_user.id,
-                               '--------------------',
-                               reply_markup=kb_client_inline_full)
+                               'Выберите подкатегорию', reply_markup=client_kb.kb_sub_category_MA)
     elif call.data == 'category_AT':
-        mas_2 = []
-        number = 0
-        needed_2 = 2
-        mas_2 = sqlite_db.sql_read_2(needed_2)
-        for w in mas_2:
-            number += 1
-            await bot.send_message(call.from_user.id, f'Вопрос:\n{w[0]}\n', reply_markup=InlineKeyboardMarkup().add(
-                InlineKeyboardButton(text='Показать ответ', callback_data=f'show_answer_2_{number}')))
+        await bot.send_message(call.from_user.id,
+                               'Выберите подкатегорию', reply_markup=client_kb.kb_sub_category_AT)
+
+
+@dp.callback_query_handler(lambda x: x.data and x.data.startswith('sub_'))
+async def list_sub_qu(call):
+    mas = []
+    number = 0
+    needed = call.data.replace('sub_', '')
+    need = int(needed)
+    mas = sqlite_db.sql_read_2(need)
+    for w in mas:
+        number += 1
+        await bot.send_message(call.from_user.id, f'Вопрос:\n{w[0]}\n', reply_markup=InlineKeyboardMarkup().add(
+            InlineKeyboardButton(text='Показать ответ', callback_data=f'show_answer_{need}_{number}')))
         await bot.send_message(call.from_user.id,
                                '--------------------',
-                               reply_markup=kb_client_inline_full)
+                               reply_markup=kb_client_inline_start)
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('show_answer_'))
 async def show_answer(callback):
-    flag = callback.data[:13]
+    flag = callback.data[:15]
     category = flag.replace('show_answer_', '')
     mas = sqlite_db.sql_read_2(category)
     str_replace = f'show_answer_{category}_'
