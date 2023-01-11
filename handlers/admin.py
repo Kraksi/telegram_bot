@@ -14,6 +14,9 @@ class FSMAdmin(StatesGroup):
     category = State()
 
 
+'''-----------------------------------------Подтверждение админа----------------------------------------------------'''
+
+
 async def make_changes_command(message: types.Message):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
@@ -25,6 +28,9 @@ async def make_changes_command(message: types.Message):
         await message.delete()
 
 
+'''------------------------------------Оповещение о принятия запроса------------------------------------------------'''
+
+
 async def accept_the_request(message: types.Message):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
@@ -32,11 +38,17 @@ async def accept_the_request(message: types.Message):
         await bot.send_message('-1001856039852', f'{message.from_user.username} Принял запрос')
 
 
+'''-----------Начало машины состояний для ввода нового вопроса с инлайн клавитурой для выбора категории-------------'''
+
+
 async def cm_start(message: types.Message):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
     if check:
         await bot.send_message(message.from_user.id, 'Выберите категорию', reply_markup=markup_inline_ad)
+
+
+'''----------------------------------------------Выбор подкатегории-------------------------------------------------'''
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('admin_category_'))
@@ -48,6 +60,9 @@ async def add_cat(call):
     elif call.data == 'admin_category_AT':
         await bot.send_message(call.from_user.id,
                                'Выберите подкатегорию', reply_markup=admin_kb.kb_adm_category_AT)
+
+
+'''----------------------------------Добавление в буфер выбранной подкатегории--------------------------------------'''
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('adm_'))
@@ -63,6 +78,9 @@ async def add_sub_cat(call):
         await FSMAdmin.question.set()
 
 
+'''---------------------------------------Отсановка машины состояний------------------------------------------------'''
+
+
 async def cancel_handler(message: types.Message, state: FSMContext):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
@@ -74,6 +92,9 @@ async def cancel_handler(message: types.Message, state: FSMContext):
         await message.reply('OK')
 
 
+'''---------------------------------------------Ввод вопроса--------------------------------------------------------'''
+
+
 async def load_question(message: types.Message, state: FSMContext):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
@@ -83,6 +104,9 @@ async def load_question(message: types.Message, state: FSMContext):
             data['question'] = message.text
         await FSMAdmin.next()
         await bot.send_message(message.from_user.id, 'Введите ответ')
+
+
+'''---------------------------------------------Ввод ответа---------------------------------------------------------'''
 
 
 async def load_answer(message: types.Message, state: FSMContext):

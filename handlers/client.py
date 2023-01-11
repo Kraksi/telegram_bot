@@ -13,6 +13,9 @@ async def filter_text(text):
     return res
 
 
+'''Старт бота'''
+
+
 async def commands_start(message: types.Message):
     #    await bot.send_message(message.from_user.id, 'Чем же вамм помочь?\n\n Ниже вы можете задать свой вопрос',
     #                           reply_markup=kb_client)
@@ -23,6 +26,9 @@ async def commands_start(message: types.Message):
                            reply_markup=kb_client_inline_start)
     await sqlite_db.sql_add_users(message.from_user.id, message.from_user.first_name, message.from_user.last_name,
                                   message.from_user.username)
+
+
+'''-----------------------------------------------Меню бота---------------------------------------------------------'''
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('button_'))
@@ -61,6 +67,9 @@ async def list_qu(call):
                                'Выберите подкатегорию', reply_markup=client_kb.kb_sub_category_AT)
 
 
+'''-------------------------------Обработка функции вывести существующие вопросы------------------------------------'''
+
+
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('sub_'))
 async def list_sub_qu(call):
     mas = []
@@ -90,6 +99,8 @@ async def show_answer(callback):
             text = await filter_text(mas[i-1])
             await bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text = text)
 
+
+'''-----------------------------------------------------------------------------------------------------------------'''
 
 
 def register_handlers_client(dp: Dispatcher):

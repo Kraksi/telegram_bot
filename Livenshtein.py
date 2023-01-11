@@ -28,7 +28,8 @@ def get_coef(questions, text):
         if (coef_cur > coef_max) or (coef_cur > (coef_oth - 300)):
             coef_max = coef_cur
             coef_oth = coef_max
-            answer = question[1]
+#            answer = question[1]
+            answer = [question[0], question[1]]
             result_for_list = [coef_max, answer]
             list_q.append(result_for_list)
     return list_q
@@ -47,6 +48,7 @@ def sort_questions(list_of_questions):
     if number_of_elements > 3:
         for i in range(0, 3):
             result_list.append(list_of_questions[i])
+            print(list_of_questions[i])
     elif number_of_elements == 3:
         for i in range(0, 2):
             result_list.append(list_of_questions[i])
