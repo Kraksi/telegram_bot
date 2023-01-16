@@ -155,3 +155,11 @@ async def read_cat(id_user):
 async def delete_buf(id_user):
     cur_q.execute(f'DELETE FROM buf_store WHERE id = {id_user}')
     base_q.commit()
+
+
+'''--------------------------------------модуль добавления вопросов (массово)---------------------------------------'''
+
+
+def add_many_q(mas):
+    cur_q.execute(f"INSERT INTO list_q_a (question, answer, category) VALUES ('{mas[0]}','{mas[1]}','{mas[2]}')")
+    base_q.commit()

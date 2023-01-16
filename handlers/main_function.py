@@ -26,9 +26,6 @@ async def main_function_answer(message: types.Message):
         if number == 1:
             continue
         await bot.send_message(message.from_user.id, f'--------------------\nВопрос: {answer[0]}\n\nОтвет: {answer[1]}\n--------------------')
-#        await bot.send_message(message.from_user.id, answer[0])
-#        await bot.send_message(message.from_user.id, f'Ответ: {answer[1]}\n--------------------')
-#        await bot.send_message(message.from_user.id, answer[1])
 
 
 '''Вывод вопроса о полезности вопроса'''

@@ -81,7 +81,7 @@ async def list_sub_qu(call):
         number += 1
         await bot.send_message(call.from_user.id, f'Вопрос:\n{w[0]}\n', reply_markup=InlineKeyboardMarkup().add(
             InlineKeyboardButton(text='Показать ответ', callback_data=f'show_answer_{need}_{number}')))
-        await bot.send_message(call.from_user.id,
+    await bot.send_message(call.from_user.id,
                                '--------------------',
                                reply_markup=kb_client_inline_start)
 
