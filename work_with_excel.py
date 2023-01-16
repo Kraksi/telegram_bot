@@ -13,6 +13,7 @@ def openxlsx():
         buf_list = []
         for cell in row:
             buf_list.append(cell.value)
+        sqlite_db.add_many_q(buf_list)
         print(buf_list)
     wb.close()
     os.remove('C:/Users/Krasti/Desktop/telegram_bot/file.xlsx')

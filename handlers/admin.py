@@ -49,11 +49,16 @@ async def upload_many_questions(message: types.Message):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
     if check:
-            print("downloading document")
-            destination = r"C:\Users\Krasti\Desktop\telegram_bot\file.xlsx"
-            destination_file = await message.document.download(destination_file=destination)
-            work_with_excel.openxlsx()
-            print("success in bot")
+        file_id = message.document.file_id
+        newFile = await bot.get_file(file_id)
+        await newFile.download(destination_file='file.xlsx')
+        work_with_excel.openxlsx()
+        print("success in bot")
+#            print("downloading document")
+#            destination = r"C:\Users\Krasti\Desktop\telegram_bot\file.xlsx"
+#            destination_file = await message.document.download(destination_file=destination)
+#            await work_with_excel.openxlsx()
+#            print("success in bot")
 
 
 '''------------------------------------Оповещение о принятия запроса------------------------------------------------'''
