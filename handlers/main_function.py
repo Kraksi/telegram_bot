@@ -15,17 +15,17 @@ async def main_function_answer(message: types.Message):
     popular_answer = liv.pop_answer(s)
     await bot.send_message(message.from_user.id, '--------------------\n\nНаиболее подходящий '
                                                  'ответ:\n\n--------------------')
-    await bot.send_message(message.from_user.id, popular_answer)
+    await bot.send_message(message.from_user.id, popular_answer[1])
     await bot.send_message(message.from_user.id, '--------------------\n\nПомог ли вам этот '
                                                  'ответ?\n\n--------------------', reply_markup=kb_necessity)
-    await sqlite_db.add_quest_answer(message.from_user.id, message.text, popular_answer)
+    await sqlite_db.add_quest_answer(message.from_user.id, message.text, popular_answer[1])
     await bot.send_message(message.from_user.id, '--------------------\n\nДругие похожие ответы:'
                                                  '\n\n--------------------')
     for answer in s:
         number += 1
         if number == 1:
             continue
-        await bot.send_message(message.from_user.id, answer)
+        await bot.send_message(message.from_user.id, f'--------------------\nВопрос: {answer[0]}\n\nОтвет: {answer[1]}\n--------------------')
 
 
 '''Вывод вопроса о полезности вопроса'''

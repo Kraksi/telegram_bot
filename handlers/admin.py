@@ -1,17 +1,23 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
+from aiogram.types import ContentTypes
+
 from create_bot import dp, bot
 from aiogram.dispatcher.filters import Text
 from data_base import sqlite_db
 from keyboards import admin_kb
 from keyboards import markup_inline_ad
+import work_with_excel
 
 
 class FSMAdmin(StatesGroup):
     question = State()
     answer = State()
     category = State()
+
+
+'''-----------------------------------------Подтверждение админа----------------------------------------------------'''
 
 
 async def make_changes_command(message: types.Message):
@@ -25,6 +31,39 @@ async def make_changes_command(message: types.Message):
         await message.delete()
 
 
+'''Обработчик загрузки файла'''
+
+
+async def ask_for_file(message: types.Message):
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
+        await bot.send_message(message.from_user.id, 'Пожалуйста приложите файл формата .xlsx', reply_markup=admin_kb.button_case_admin_main)
+
+
+'''------------------------------------Модуль загрузки большого колличества-----------------------------------------'''
+
+
+@dp.message_handler(content_types=ContentTypes.DOCUMENT)
+async def upload_many_questions(message: types.Message):
+    check = False
+    check = await sqlite_db.check_user_id(message.from_user.id)
+    if check:
+        file_id = message.document.file_id
+        newFile = await bot.get_file(file_id)
+        await newFile.download(destination_file='file.xlsx')
+        work_with_excel.openxlsx()
+        print("success in bot")
+#            print("downloading document")
+#            destination = r"C:\Users\Krasti\Desktop\telegram_bot\file.xlsx"
+#            destination_file = await message.document.download(destination_file=destination)
+#            await work_with_excel.openxlsx()
+#            print("success in bot")
+
+
+'''------------------------------------Оповещение о принятия запроса------------------------------------------------'''
+
+
 async def accept_the_request(message: types.Message):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
@@ -32,11 +71,17 @@ async def accept_the_request(message: types.Message):
         await bot.send_message('-1001856039852', f'{message.from_user.username} Принял запрос')
 
 
+'''-----------Начало машины состояний для ввода нового вопроса с инлайн клавитурой для выбора категории-------------'''
+
+
 async def cm_start(message: types.Message):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
     if check:
         await bot.send_message(message.from_user.id, 'Выберите категорию', reply_markup=markup_inline_ad)
+
+
+'''----------------------------------------------Выбор подкатегории-------------------------------------------------'''
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('admin_category_'))
@@ -48,6 +93,9 @@ async def add_cat(call):
     elif call.data == 'admin_category_AT':
         await bot.send_message(call.from_user.id,
                                'Выберите подкатегорию', reply_markup=admin_kb.kb_adm_category_AT)
+
+
+'''----------------------------------Добавление в буфер выбранной подкатегории--------------------------------------'''
 
 
 @dp.callback_query_handler(lambda x: x.data and x.data.startswith('adm_'))
@@ -63,6 +111,9 @@ async def add_sub_cat(call):
         await FSMAdmin.question.set()
 
 
+'''---------------------------------------Отсановка машины состояний------------------------------------------------'''
+
+
 async def cancel_handler(message: types.Message, state: FSMContext):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
@@ -74,6 +125,9 @@ async def cancel_handler(message: types.Message, state: FSMContext):
         await message.reply('OK')
 
 
+'''---------------------------------------------Ввод вопроса--------------------------------------------------------'''
+
+
 async def load_question(message: types.Message, state: FSMContext):
     check = False
     check = await sqlite_db.check_user_id(message.from_user.id)
@@ -83,6 +137,9 @@ async def load_question(message: types.Message, state: FSMContext):
             data['question'] = message.text
         await FSMAdmin.next()
         await bot.send_message(message.from_user.id, 'Введите ответ')
+
+
+'''---------------------------------------------Ввод ответа---------------------------------------------------------'''
 
 
 async def load_answer(message: types.Message, state: FSMContext):
@@ -103,6 +160,7 @@ def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(cm_start, commands=['Upload', 'Upload_another'])
     dp.register_message_handler(accept_the_request, commands=['Accept_request'])
     dp.register_message_handler(cancel_handler, state="*", commands='cancel')
+    dp.register_message_handler(ask_for_file, commands=['Upload_many_questions'])
     dp.register_message_handler(cancel_handler, Text(equals='cancel', ignore_case=True), state="*")
     dp.register_message_handler(load_question, state=FSMAdmin.question)
     dp.register_message_handler(load_answer, state=FSMAdmin.answer)
